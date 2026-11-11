@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Icon, Image, Keyboard, List } from "@raycast/api";
+import { Action, ActionPanel, Color, Icon, Image, Keyboard, List } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
 import { searchUsers, userProjects } from "./api";
@@ -61,6 +61,9 @@ export default function Command() {
 
 function MemberListItem({ user }: { user: User }) {
   const accessories: List.Item.Accessory[] = [];
+  if (user.verified) {
+    accessories.push({ icon: { source: Icon.CheckRosette, tintColor: Color.Blue }, tooltip: "Verified member" });
+  }
   if (place(user)) accessories.push({ icon: Icon.Pin, text: place(user) });
   if (user.x_followers_count != null) {
     accessories.push({ icon: Icon.TwoPeople, text: followers.format(user.x_followers_count), tooltip: "X followers" });
@@ -68,10 +71,7 @@ function MemberListItem({ user }: { user: User }) {
 
   return (
     <List.Item
-      title={{
-        value: `${user.name ?? `@${user.username}`}${user.verified ? " ✓" : ""}`,
-        tooltip: user.verified ? "Verified member" : undefined,
-      }}
+      title={user.name ?? `@${user.username}`}
       subtitle={user.name ? `@${user.username}` : undefined}
       icon={user.avatar_url ? { source: user.avatar_url, mask: Image.Mask.Circle, fallback: Icon.Person } : Icon.Person}
       accessories={accessories}
