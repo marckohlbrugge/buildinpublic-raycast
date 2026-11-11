@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Icon, Image, List, Keyboard } from "@raycast/api";
+import { Action, ActionPanel, Color, Icon, Image, Keyboard, List } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
 import { searchUsers, userProjects } from "./api";
@@ -7,6 +7,13 @@ import { ProjectCopyActions, ProjectListItem, ProjectOpenActions } from "./compo
 import { User } from "./types";
 
 const followers = new Intl.NumberFormat("en", { notation: "compact" });
+const countries = new Intl.DisplayNames("en", { type: "region" });
+
+// Only the geocoded place: the location makers type themselves is often a joke or emoji.
+function place(user: User) {
+  const country = user.country_code ? countries.of(user.country_code) : undefined;
+  return [user.city, country].filter(Boolean).join(", ");
+}
 
 export default function Command() {
   const [query, setQuery] = useState("");
@@ -57,7 +64,7 @@ function MemberListItem({ user }: { user: User }) {
   if (user.verified) {
     accessories.push({ icon: { source: Icon.CheckRosette, tintColor: Color.Blue }, tooltip: "Verified member" });
   }
-  if (user.location) accessories.push({ icon: Icon.Pin, text: user.city ?? user.location });
+  if (place(user)) accessories.push({ icon: Icon.Pin, text: place(user) });
   if (user.x_followers_count != null) {
     accessories.push({ icon: Icon.TwoPeople, text: followers.format(user.x_followers_count), tooltip: "X followers" });
   }

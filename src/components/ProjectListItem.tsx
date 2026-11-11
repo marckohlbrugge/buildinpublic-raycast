@@ -1,4 +1,4 @@
-import { Action, Color, Icon, List, Keyboard } from "@raycast/api";
+import { Action, Color, Icon, Image, Keyboard, List } from "@raycast/api";
 import { ReactNode } from "react";
 import { Project } from "../types";
 
