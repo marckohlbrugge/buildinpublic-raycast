@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Color, Icon, Image, Keyboard, List } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
-import { APIError, searchDeals } from "./api";
+import { APIError, dealCategories, searchDeals } from "./api";
 import { DealDetailView, formatValue } from "./components/DealDetailView";
 import { DealRequestForm } from "./components/DealRequestForm";
 import { Deal } from "./types";
@@ -11,6 +11,9 @@ const unavailable = (error?: Error) => error instanceof APIError && error.notFou
 
 export default function Command() {
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("");
+  // The filter is an extra: if categories fail to load, search still works.
+  const { data: categories } = useCachedPromise(dealCategories, [], { onError: console.error });
 
   const {
     data: deals,
@@ -18,12 +21,12 @@ export default function Command() {
     error,
     pagination,
   } = useCachedPromise(
-    (q: string) =>
+    (q: string, category: string) =>
       async ({ cursor }: { cursor?: string }) => {
-        const page = await searchDeals({ q, cursor });
+        const page = await searchDeals({ q, category, cursor });
         return { data: page.data, hasMore: page.has_more, cursor: page.next_cursor ?? undefined };
       },
-    [query],
+    [query, category],
     { keepPreviousData: true, onError: (error) => (unavailable(error) ? undefined : console.error(error)) },
   );
 
@@ -43,6 +46,18 @@ export default function Command() {
       throttle
       onSearchTextChange={setQuery}
       searchBarPlaceholder="Search deals on software…"
+      searchBarAccessory={
+        categories?.length ? (
+          <List.Dropdown tooltip="Category" onChange={setCategory}>
+            <List.Dropdown.Item title="All Categories" value="" />
+            <List.Dropdown.Section>
+              {categories.map((category) => (
+                <List.Dropdown.Item key={category.slug} title={category.name} value={category.slug} />
+              ))}
+            </List.Dropdown.Section>
+          </List.Dropdown>
+        ) : undefined
+      }
     >
       {unavailable(error) ? (
         <List.EmptyView icon={Icon.Lock} title="Deals aren't available for your account yet" />
@@ -56,16 +71,26 @@ export default function Command() {
           actions={<ActionPanel>{requestDeal}</ActionPanel>}
         />
       ) : (
-        deals?.map((deal) => <DealListItem key={deal.slug} deal={deal} requestDeal={requestDeal} />)
+        deals?.map((deal) => (
+          <DealListItem key={deal.slug} deal={deal} showCategory={!category} requestDeal={requestDeal} />
+        ))
       )}
     </List>
   );
 }
 
-function DealListItem({ deal, requestDeal }: { deal: Deal; requestDeal: React.ReactNode }) {
+function DealListItem({
+  deal,
+  showCategory,
+  requestDeal,
+}: {
+  deal: Deal;
+  showCategory: boolean;
+  requestDeal: React.ReactNode;
+}) {
   const accessories: List.Item.Accessory[] = [];
   if (deal.requires_application) accessories.push({ tag: "By application" });
-  if (deal.category) accessories.push({ text: deal.category.name });
+  if (deal.category && showCategory) accessories.push({ text: deal.category.name });
   if (deal.value_usd != null) {
     accessories.push({
       tag: { value: formatValue(deal.value_usd), color: Color.Green },

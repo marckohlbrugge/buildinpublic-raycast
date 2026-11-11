@@ -51,10 +51,15 @@ export interface Page<T> {
   next_cursor: string | null;
 }
 
+export interface DealCategory {
+  slug: string;
+  name: string;
+}
+
 export interface Deal {
   slug: string;
   name: string;
-  category: { slug: string; name: string } | null;
+  category: DealCategory | null;
   summary: string | null;
   value_usd: number | null;
   requires_application: boolean;

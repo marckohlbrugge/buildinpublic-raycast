@@ -1,5 +1,5 @@
 import { API_URL, accessToken, renewAccessToken } from "./oauth";
-import { Deal, DealDetail, DealRequest, OwnProject, Page, Project, ProjectInput, User } from "./types";
+import { Deal, DealCategory, DealDetail, DealRequest, OwnProject, Page, Project, ProjectInput, User } from "./types";
 
 export class APIError extends Error {
   constructor(
@@ -80,7 +80,11 @@ export function deleteProject(id: string) {
   return request<void>("DELETE", `/v1/projects/${id}`);
 }
 
-export function searchDeals(query: { q?: string; cursor?: string }) {
+export function dealCategories() {
+  return request<Page<DealCategory>>("GET", "/v1/deal_categories").then((page) => page.data);
+}
+
+export function searchDeals(query: { q?: string; category?: string; cursor?: string }) {
   return request<Page<Deal>>("GET", "/v1/deals", { query: { ...query, limit: "50" } });
 }
 
