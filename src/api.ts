@@ -1,5 +1,5 @@
 import { API_URL, accessToken, renewAccessToken } from "./oauth";
-import { OwnProject, Page, Project, ProjectInput, User } from "./types";
+import { Deal, DealDetail, DealRequest, OwnProject, Page, Project, ProjectInput, User } from "./types";
 
 export class APIError extends Error {
   constructor(
@@ -8,6 +8,10 @@ export class APIError extends Error {
     readonly fields: Record<string, string[]> = {},
   ) {
     super(message);
+  }
+
+  get notFound() {
+    return this.type === "not_found";
   }
 
   get needsElevatedAccess() {
@@ -74,4 +78,16 @@ export function updateProject(id: string, project: ProjectInput) {
 
 export function deleteProject(id: string) {
   return request<void>("DELETE", `/v1/projects/${id}`);
+}
+
+export function searchDeals(query: { q?: string; cursor?: string }) {
+  return request<Page<Deal>>("GET", "/v1/deals", { query: { ...query, limit: "50" } });
+}
+
+export function getDeal(slug: string) {
+  return request<DealDetail>("GET", `/v1/deals/${slug}`);
+}
+
+export function requestDeal(input: { product_name: string; url?: string }) {
+  return request<DealRequest>("POST", "/v1/deal_requests", { body: input });
 }

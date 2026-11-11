@@ -8,6 +8,7 @@ _This extension requires a Build in Public account._
 
 - **My Projects**: see the projects on your profile, open them, edit them or remove them
 - **Add Project**: add a project and get the tag or DNS record that verifies it
+- **Search Deals**: find discounts and credits on software, see who each offer is for, and request a deal we don't have yet
 - **Search Projects**: search verified projects in the directory
 - **Search Members**: search makers by name, bio or location, and see their projects
 

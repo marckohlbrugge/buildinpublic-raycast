@@ -50,3 +50,40 @@ export interface Page<T> {
   has_more: boolean;
   next_cursor: string | null;
 }
+
+export interface Deal {
+  slug: string;
+  name: string;
+  category: { slug: string; name: string } | null;
+  summary: string | null;
+  value_usd: number | null;
+  requires_application: boolean;
+  logo_url: string | null;
+  deal_url: string;
+}
+
+export interface DealOffer {
+  summary: string | null;
+  value_usd: number | null;
+  requires_application: boolean;
+  verified_members_only: boolean;
+  requirements: string[];
+}
+
+export interface DealDetail extends Deal {
+  description: string | null;
+  website_url: string | null;
+  features: { title: string | null; text: string | null }[];
+  pros: string[];
+  cons: string[];
+  offers: DealOffer[];
+}
+
+export interface DealRequest {
+  product_name: string;
+  url: string | null;
+  status: "available" | "watching" | "requested";
+  deal: Deal | null;
+  message: string;
+  created_at: string;
+}
