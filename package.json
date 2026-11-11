@@ -3,7 +3,7 @@
   "name": "buildinpublic",
   "title": "Build in Public",
   "description": "Manage your Build in Public projects and search the maker directory from Raycast.",
-  "icon": "icon.png",
+  "icon": "extension-icon.png",
   "author": "marckohlbrugge",
   "categories": [
     "Productivity",

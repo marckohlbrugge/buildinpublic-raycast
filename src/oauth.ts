@@ -14,7 +14,7 @@ const UNUSED_CLIENT_LIFETIME = 12 * 60 * 60 * 1000;
 const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.Web,
   providerName: "Build in Public",
-  providerIcon: "icon.png",
+  providerIcon: "extension-icon.png",
   providerId: "buildinpublic",
   description: "Connect your Build in Public account to manage your projects.",
 });
