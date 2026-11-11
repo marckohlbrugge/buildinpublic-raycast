@@ -22,7 +22,8 @@ export function VerificationDetail({ project }: { project: OwnProject }) {
   const markdown = [
     `# Verify ${project.name}`,
     `${project.name} is on your profile. To list it in the directory, show that the site is yours.`,
-    verification.instructions,
+    // The instructions name tags like <head>, which markdown would swallow as HTML.
+    verification.instructions.replace(/<\/?\w+>/g, (tag) => `\`${tag}\``),
     "## Meta tag",
     "```html\n" + verification.meta_tag + "\n```",
     "## Link tag",
