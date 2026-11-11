@@ -13,16 +13,17 @@ export function ProjectListItem({
 }) {
   const accessories: List.Item.Accessory[] = [];
   if (showOwner) accessories.push({ text: `@${project.owner.username}` });
-  if (project.ahrefs_domain_rating != null) {
-    accessories.push({ tag: `DR ${Math.round(project.ahrefs_domain_rating)}`, tooltip: "Ahrefs Domain Rating" });
-  }
   if (!project.verified) accessories.push({ tag: { value: "Unverified", color: Color.Orange } });
 
   return (
     <List.Item
       title={project.name}
       subtitle={project.pitch ?? undefined}
-      icon={project.icon_url ? { source: project.icon_url, fallback: Icon.AppWindow } : Icon.AppWindow}
+      icon={
+        project.icon_url
+          ? { source: project.icon_url, mask: Image.Mask.RoundedRectangle, fallback: Icon.AppWindow }
+          : Icon.AppWindow
+      }
       keywords={[project.url, project.owner.username]}
       accessories={accessories}
       actions={actions}

@@ -1,5 +1,6 @@
 import { Action, ActionPanel, Alert, Icon, Keyboard, List, Toast, confirmAlert, showToast } from "@raycast/api";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useState } from "react";
 import { deleteProject, myProjects } from "./api";
 import { ProjectForm } from "./components/ProjectForm";
 import { ProjectCopyActions, ProjectListItem, ProjectOpenActions } from "./components/ProjectListItem";
@@ -7,6 +8,8 @@ import { Project } from "./types";
 
 export default function Command() {
   const { data: projects, isLoading, revalidate, mutate } = useCachedPromise(myProjects);
+  const [filter, setFilter] = useState("all");
+  const shown = filter === "unverified" ? projects?.filter((project) => !project.verified) : projects;
 
   async function remove(project: Project) {
     const confirmed = await confirmAlert({
@@ -37,14 +40,27 @@ export default function Command() {
   );
 
   return (
-    <List isLoading={isLoading} searchBarPlaceholder="Filter your projects…">
-      <List.EmptyView
-        icon={Icon.AppWindow}
-        title="No projects yet"
-        description="Add the first project to your Build in Public profile."
-        actions={<ActionPanel>{addProject}</ActionPanel>}
-      />
-      {projects?.map((project) => (
+    <List
+      isLoading={isLoading}
+      searchBarPlaceholder="Filter your projects…"
+      searchBarAccessory={
+        <List.Dropdown tooltip="Show" onChange={setFilter}>
+          <List.Dropdown.Item title="All Projects" value="all" />
+          <List.Dropdown.Item title="Unverified" value="unverified" />
+        </List.Dropdown>
+      }
+    >
+      {filter === "unverified" && projects?.length ? (
+        <List.EmptyView icon={Icon.CheckCircle} title="All your projects are verified" />
+      ) : (
+        <List.EmptyView
+          icon={Icon.AppWindow}
+          title="No projects yet"
+          description="Add the first project to your Build in Public profile."
+          actions={<ActionPanel>{addProject}</ActionPanel>}
+        />
+      )}
+      {shown?.map((project) => (
         <ProjectListItem
           key={project.id}
           project={project}

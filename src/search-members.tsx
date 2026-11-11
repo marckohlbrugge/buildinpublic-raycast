@@ -54,6 +54,9 @@ export default function Command() {
 
 function MemberListItem({ user }: { user: User }) {
   const accessories: List.Item.Accessory[] = [];
+  if (user.verified) {
+    accessories.push({ icon: { source: Icon.CheckRosette, tintColor: Color.Blue }, tooltip: "Verified member" });
+  }
   if (user.location) accessories.push({ icon: Icon.Pin, text: user.city ?? user.location });
   if (user.x_followers_count != null) {
     accessories.push({ icon: Icon.TwoPeople, text: followers.format(user.x_followers_count), tooltip: "X followers" });

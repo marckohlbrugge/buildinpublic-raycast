@@ -2,6 +2,7 @@ export interface User {
   id: string;
   username: string;
   name: string | null;
+  verified: boolean;
   bio: string | null;
   location: string | null;
   city: string | null;
