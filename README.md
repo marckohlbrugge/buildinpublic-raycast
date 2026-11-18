@@ -25,4 +25,4 @@ npm install
 npm run dev
 ```
 
-To point the extension at a local server (`localhost:3000` and `api.localhost:3000`), set Environment to Development in the extension's preferences.
+`npm run dev` points the extension at a local server (`localhost:3000` and `api.localhost:3000`). The Store build always talks to buildinpublic.com.
